@@ -13,7 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                environment: [prod]
+                environment: [test, prod]
                 include:
                   - environment: test
                    # CDF cluster, like bluefield, greenfield or westeurope-1
