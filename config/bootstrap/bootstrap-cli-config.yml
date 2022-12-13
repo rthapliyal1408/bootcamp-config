@@ -1,4 +1,3 @@
----
 bootstrap:
   # This is a template bootstrap CLI file that will need to be completed. For a more complete example look at 
   # https://github.com/cognitedata/inso-bootstrap-cli/blob/main/configs/config-deploy-example-v2.yml
@@ -57,49 +56,53 @@ bootstrap:
     # Support multiple CDF Projects, like dev/test/prod in one config. 
         - cdf-project: cdf-bootcamp-15-test
           mappings:
-              - cdf-group: cdf:root
-                idp-source-id: 0d564958-c24f-4420-849c-5354fcbb1ad8
-                idp-source-name: bootcamp-15-test-admin
-              - cdf-group: cdf:all:owner
-                idp-source-id: ad44820a-0cb2-4829-96aa-549fd5739e74
-                idp-source-name: bootcamp-15-test-all-owner
-              - cdf-group: cdf:all:read
-                idp-source-id: 89300318-afd3-4858-9a49-b3e6cdc58def
-                idp-source-name: bootcamp-15-test-all-read
+            - cdf-group: cdf:root
+              idp-source-id: 0d564958-c24f-4420-849c-5354fcbb1ad8
+              idp-source-name: bootcamp-15-test-admin
+            - cdf-group: cdf:all:owner
+              idp-source-id: ad44820a-0cb2-4829-96aa-549fd5739e74
+              idp-source-name: bootcamp-15-test-all-owner
+            - cdf-group: cdf:all:read
+              idp-source-id: 89300318-afd3-4858-9a49-b3e6cdc58def
+              idp-source-name: bootcamp-15-test-all-read
         - cdf-project: cdf-bootcamp-15-prod
           mappings:
-              - cdf-group: cdf:root
-                idp-source-id: 1c52fad9-5916-4b7d-955f-ea47ee384275
-                idp-source-name: bootcamp-15-prod-admin
-              - cdf-group: cdf:all:owner
-                idp-source-id: 6ad3f028-f634-4fc9-8191-d99908bcc3d5
-                idp-source-name: bootcamp-15-prod-all-owner
-              - cdf-group: cdf:all:read
-                idp-source-id: 3a3243c6-1199-4962-9fbe-227df6e6b1b8
-                idp-source-name: bootcamp-15-prod-all-read
+            - cdf-group: cdf:root
+              idp-source-id: 1c52fad9-5916-4b7d-955f-ea47ee384275
+              idp-source-name: bootcamp-15-prod-admin
+            - cdf-group: cdf:all:owner
+              idp-source-id: 6ad3f028-f634-4fc9-8191-d99908bcc3d5
+              idp-source-name: bootcamp-15-prod-all-owner
+            - cdf-group: cdf:all:read
+              idp-source-id: 3a3243c6-1199-4962-9fbe-227df6e6b1b8
+              idp-source-name: bootcamp-15-prod-all-read
+
 
     namespaces:
-    # Typical config will have separate namespace by data source ("src") and use cases ("uc")
-    - ns-name: src
-      description: Sources used for data extraction
-      # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
-      ns-nodes:
-       - node-name: src:001:sap
-         description: Source 01 data from SAP
-       - node-name: src:002:opcua
-         description: Source 02 data from opcua
-    # Typical config will have separate namespace by data source ("src") and use cases ("uc")
-    - ns-name: uc
-      description: Use cases representing the data/products
+      # Typical config will have separate namespace by data source ("src") and use cases ("uc")
+      - ns-name: src
+        description: Sources used for data extraction
+        # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
+        ns-nodes:
+          - node-name: src:001:sap
+            description: Source 01 data from SAP
+          - node-name: src:002:opcua
+            description: Source 02 data from opcua
+      # Typical config will have separate namespace by data source ("src") and use cases ("uc")
+      - ns-name: uc
+        description: Use cases representing the data/products
 
-      # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
-      ns-nodes:
-       - node-name: uc:001:oee
-         description: Use case 001 Over all Equipment effectiveness
-         shared-access:
-          read:
-           - node-name: src:001:sap
-           - node-name: src:002:opcua
+        # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
+        ns-nodes:
+          - node-name: uc:001:oee
+            description: Use case 001 Over all Equipment effectiveness
+            description: Use case 001 Over all Equipment effectiveness
+            shared-access:
+              read:
+                - node-name: src:001:sap
+                - node-name: src:002:opcua
+
+
 # de-facto standards for CDF CogniteClient and logger configuration.
 # Following the same parameter structure as the 'Cognite Python Extractor-Utilities'
 # and 'Cognite DB Extractor' configuration.
