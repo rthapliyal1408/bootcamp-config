@@ -1,52 +1,52 @@
-bootstrap:
+---
+name: deploy-bootstrap-cli
 
-  features:
-    with-special-groups: false
-    with-raw-capability: true
-    aggregated-level-name: all
-    group-prefix: cdf
-    dataset-suffix: ds
-    rawdb-suffix: db
-    rawdb-additional-variants:
-      - state
-
- 
-idp-cdf-mappings:
-    # Support multiple CDF Projects, like dev/test/prod in one config.
-           - cdf-project: cdf-bootcamp-15-test
-              mappings:
-              - cdf-group: cdf:root
-                idp-source-id: 0d564958-c24f-4420-849c-5354fcbb1ad8
-                idp-source-name: bootcamp-15-test-admin
-              - cdf-group: cdf:all:owner
-                idp-source-id: ad44820a-0cb2-4829-96aa-549fd5739e74
-                idp-source-name: bootcamp-15-test-all-owner
-              - cdf-group: cdf:all:read
-                idp-source-id: 89300318-afd3-4858-9a49-b3e6cdc58def
-                idp-source-name: bootcamp-15-test-all-read
-           - cdf-project: cdf-bootcamp-15-prod
-              mappings:
-              - cdf-group: cdf:root
-                idp-source-id: 1c52fad9-5916-4b7d-955f-ea47ee384275
-                idp-source-name: bootcamp-15-prod-admin
-              - cdf-group: cdf:all:owner
-                idp-source-id: 6ad3f028-f634-4fc9-8191-d99908bcc3d5
-                idp-source-name: bootcamp-15-prod-all-owner
-              - cdf-group: cdf:all:read
-                idp-source-id: 3a3243c6-1199-4962-9fbe-227df6e6b1b8
-                idp-source-name: bootcamp-15-prod-all-read
+on:
+    push:
+        branches:
+            - main
  
 
-namespaces:
-    # Typical config will have separate namespace by data source ("src") and use cases ("uc")
-    - ns-name: src
-      description: Sources used for data extraction
-      # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
-      ns-nodes:
-        - node-name: src:001:sap
-          description: Source 01 data from SAP
-        - node-name: src:002:opcua
-          description: Source 02 data from opcua
-    # Typical config will have separate namespace by data source ("src") and use cases ("uc")
-    - ns-name: uc
-      description: Use cases representing the data/products
+jobs:
+    bootstrap_cdf:
+        name: Bootstrap CDF
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                environment: [prod, test]
+                include:
+                  - environment: test
+                   # CDF cluster, like bluefield, greenfield or westeurope-1
+                    CDF_CLUSTER: westeurope-1
+                   # CDF Project name
+                    CDF_PROJECT: cdf-bootcamp-15-test
+                   # Azure AD tenant id
+                    IDP_TENANT: 16e3985b-ebe8-4e24-9da4-933e21a9fc81
+                  - environment: prod
+                   # CDF cluster, like bluefield, greenfield or westeurope-1
+                    CDF_CLUSTER: westeurope-1
+                   #CDF Project name
+                    CDF_PROJECT: cdf-bootcamp-15-prod
+                   # Azure AD tenant id
+                    IDP_TENANT: 16e3985b-ebe8-4e24-9da4-933e21a9fc81
+
+        environment: ${{ matrix.environment}}
+        env:
+            CDF_HOST: https://${{ matrix.CDF_CLUSTER }}.cognitedata.com/
+
+        steps:
+            - uses: actions/checkout@v3
+            - uses: cognitedata/inso-bootstrap-cli@main
+              env:
+                  BOOTSTRAP_IDP_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+                  BOOTSTRAP_CDF_HOST: ${{ env.CDF_HOST }}
+                  BOOTSTRAP_CDF_PROJECT: ${{ matrix.CDF_PROJECT }}
+                  BOOTSTRAP_IDP_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+                  BOOTSTRAP_IDP_TOKEN_URL: https://login.microsoftonline.com/${{ matrix.IDP_TENANT }}/oauth2/v2.0/token
+                  BOOTSTRAP_IDP_SCOPES: ${{ env.CDF_HOST }}.default
+
+              with:
+                  # Path to Bootstrap CLI configuration file
+                  config_file: ./config/bootstrap/bootstrap-cli-config.yml
+            # "yes"|"no" deploy with special groups and aad_mappings
+            #with_special_groups: "yes"
