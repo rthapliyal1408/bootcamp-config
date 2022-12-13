@@ -1,61 +1,81 @@
----
-# follows the same parameter structure as the DB extractor configuration
-cognite: # kwargs to pass to the CogniteClient, Environment variable format: ${ENVIRONMENT_VARIABLE}
-  # host: https://${EXTPIPES_CDF_CLUSTER}.cognitedata.com/
-    host: ${EXTPIPES_CDF_HOST}
-    project: ${EXTPIPES_CDF_PROJECT}
-  #
-  # AAD IdP login credentials:
-  #
-    idp-authentication:
-        client-id: ${EXTPIPES_IDP_CLIENT_ID}
-        secret: ${EXTPIPES_IDP_CLIENT_SECRET}
-        scopes:
-            - ${EXTPIPES_IDP_SCOPES}
-        token_url: ${EXTPIPES_IDP_TOKEN_URL}
+bootstrap:
 
+ 
+
+  features:
+    with-special-groups: false
+    with-raw-capability: true
+    aggregated-level-name: all
+    group-prefix: cdf
+    dataset-suffix: ds
+    rawdb-suffix: db
+    rawdb-additional-variants:
+      - state
+
+ 
+
+  idp-cdf-mappings:
+    # Support multiple CDF Projects, like dev/test/prod in one config.
+            - cdf-project: cdf-bootcamp-15-test
+              mappings:
+              - cdf-group: cdf:root
+                idp-source-id: 0d564958-c24f-4420-849c-5354fcbb1ad8
+                idp-source-name: bootcamp-15-test-admin
+              - cdf-group: cdf:all:owner
+                idp-source-id: ad44820a-0cb2-4829-96aa-549fd5739e74
+                idp-source-name: bootcamp-15-test-all-owner
+              - cdf-group: cdf:all:read
+                idp-source-id: 89300318-afd3-4858-9a49-b3e6cdc58def
+                idp-source-name: bootcamp-15-test-all-read
+            - cdf-project: cdf-bootcamp-15-prod
+              mappings:
+              - cdf-group: cdf:root
+                idp-source-id: 1c52fad9-5916-4b7d-955f-ea47ee384275
+                idp-source-name: bootcamp-15-prod-admin
+              - cdf-group: cdf:all:owner
+                idp-source-id: 6ad3f028-f634-4fc9-8191-d99908bcc3d5
+                idp-source-name: bootcamp-15-prod-all-owner
+              - cdf-group: cdf:all:read
+                idp-source-id: 3a3243c6-1199-4962-9fbe-227df6e6b1b8
+                idp-source-name: bootcamp-15-prod-all-read
+ 
+
+  namespaces:
+    # Typical config will have separate namespace by data source ("src") and use cases ("uc")
+    - ns-name: src
+      description: Sources used for data extraction
+      # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
+      ns-nodes:
+        - node-name: src:001:sap
+          description: Source 01 data from SAP
+        - node-name: src:002:opcua
+          description: Source 02 data from opcua
+    # Typical config will have separate namespace by data source ("src") and use cases ("uc")
+    - ns-name: uc
+      description: Use cases representing the data/products
+
+ 
+
+      # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
+      ns-nodes:
+        - node-name: uc:001:oee
+          description: Use case 001 Over all Equipment effectiveness
+          shared-access:
+            read:
+              - node-name: src:001:sap
+              - node-name: src:002:opcua
+cognite:
+  host: ${BOOTSTRAP_CDF_HOST}
+  project: ${BOOTSTRAP_CDF_PROJECT}
+  idp-authentication:
+    client-id: ${BOOTSTRAP_IDP_CLIENT_ID}
+    secret: ${BOOTSTRAP_IDP_CLIENT_SECRET}
+    scopes:
+      - ${BOOTSTRAP_IDP_SCOPES}
+    token_url: ${BOOTSTRAP_IDP_TOKEN_URL}
 logger:
-    file:
-        path: ./logs/extpipes-deploy.log
-        level: INFO
-    console:
-        level: INFO
-
-# extpipe-pattern only documentation atm
-extpipe-pattern: '{source}:{short-name}:{rawtable-name}:{suffix}'
-
-# can contain multiple contacts, can be overwritten on pipeline level
-default-contacts:
-    - name: [Contact name]
-      email: [Contact email]
-      role: [Role name]
-      send-notification: true
-
-rawdbs:
-- rawdb-name: src:001:sap:db
-  dataset-external-id: src:001:sap:ds
-  short-name: sap
-  rawtables:
-      - rawtable-name: assets
-        pipelines:
-        - source: csv
-          schedule: On trigger
-          contacts:
-            - name: Rishabh
-              email: rthapliyal@slb.com
-              role: Bootcamp 15 Administrator
-              send-notification: true
-
-- rawdb-name: src:002:opcua:db
-  dataset-external-id: src:002:opcua:ds
-  short-name: sap
-  rawtables:
-      - rawtable-name: assets
-        pipelines:
-        - source: ice-cream-api
-          schedule: On trigger
-          contacts:
-            - name: Rishabh
-              email: rthapliyal@slb.com
-              role: Bootcamp 15 Administrator
-              send-notification: true
+  file:
+    path: ./logs/bootstrap-cli-logs.log
+    level: INFO
+  console:
+    level: INFO
