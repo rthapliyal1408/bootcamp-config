@@ -1,52 +1,61 @@
 ---
-name: deploy-bootstrap-cli
+# follows the same parameter structure as the DB extractor configuration
+cognite: # kwargs to pass to the CogniteClient, Environment variable format: ${ENVIRONMENT_VARIABLE}
+  # host: https://${EXTPIPES_CDF_CLUSTER}.cognitedata.com/
+    host: ${EXTPIPES_CDF_HOST}
+    project: ${EXTPIPES_CDF_PROJECT}
+  #
+  # AAD IdP login credentials:
+  #
+    idp-authentication:
+        client-id: ${EXTPIPES_IDP_CLIENT_ID}
+        secret: ${EXTPIPES_IDP_CLIENT_SECRET}
+        scopes:
+            - ${EXTPIPES_IDP_SCOPES}
+        token_url: ${EXTPIPES_IDP_TOKEN_URL}
 
-on:
-    push:
-        branches:
-            - main
- 
+logger:
+    file:
+        path: ./logs/extpipes-deploy.log
+        level: INFO
+    console:
+        level: INFO
 
-jobs:
-    bootstrap_cdf:
-        name: Bootstrap CDF
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                environment: [prod, test]
-                include:
-                  - environment: test
-                   # CDF cluster, like bluefield, greenfield or westeurope-1
-                    CDF_CLUSTER: westeurope-1
-                   # CDF Project name
-                    CDF_PROJECT: cdf-bootcamp-15-test
-                   # Azure AD tenant id
-                    IDP_TENANT: 16e3985b-ebe8-4e24-9da4-933e21a9fc81
-                  - environment: prod
-                   # CDF cluster, like bluefield, greenfield or westeurope-1
-                    CDF_CLUSTER: westeurope-1
-                   #CDF Project name
-                    CDF_PROJECT: cdf-bootcamp-15-prod
-                   # Azure AD tenant id
-                    IDP_TENANT: 16e3985b-ebe8-4e24-9da4-933e21a9fc81
+# extpipe-pattern only documentation atm
+extpipe-pattern: '{source}:{short-name}:{rawtable-name}:{suffix}'
 
-        environment: ${{ matrix.environment}}
-        env:
-            CDF_HOST: https://${{ matrix.CDF_CLUSTER }}.cognitedata.com/
+# can contain multiple contacts, can be overwritten on pipeline level
+default-contacts:
+    - name: [Contact name]
+      email: [Contact email]
+      role: [Role name]
+      send-notification: true
 
-        steps:
-            - uses: actions/checkout@v3
-            - uses: cognitedata/inso-bootstrap-cli@main
-              env:
-                  BOOTSTRAP_IDP_CLIENT_ID: ${{ secrets.CLIENT_ID }}
-                  BOOTSTRAP_CDF_HOST: ${{ env.CDF_HOST }}
-                  BOOTSTRAP_CDF_PROJECT: ${{ matrix.CDF_PROJECT }}
-                  BOOTSTRAP_IDP_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-                  BOOTSTRAP_IDP_TOKEN_URL: https://login.microsoftonline.com/${{ matrix.IDP_TENANT }}/oauth2/v2.0/token
-                  BOOTSTRAP_IDP_SCOPES: ${{ env.CDF_HOST }}.default
+rawdbs:
+- rawdb-name: src:001:sap:db
+    dataset-external-id: src:001:sap:ds
+    short-name: sap
+    rawtables:
+      - rawtable-name: assets
+        pipelines:
+        - source: csv
+          schedule: On trigger
+          contacts:
+            - name: Rishabh
+              email: rthapliyal@slb.com
+              role: Bootcamp 15 Administrator
+              send-notification: true
 
-              with:
-                  # Path to Bootstrap CLI configuration file
-                  config_file: ./config/bootstrap/bootstrap-cli-config.yml
-            # "yes"|"no" deploy with special groups and aad_mappings
-            #with_special_groups: "yes"
+- rawdb-name: src:002:opcua:db
+    dataset-external-id: src:002:opcua:ds
+    short-name: sap
+    rawtables:
+      - rawtable-name: assets
+        pipelines:
+        - source: ice-cream-api
+          schedule: On trigger
+          contacts:
+            - name: Rishabh
+              email: rthapliyal@slb.com
+              role: Bootcamp 15 Administrator
+              send-notification: true
