@@ -96,6 +96,11 @@ bootstrap:
         ns-nodes:
           - node-name: uc:001:oee
             description: Use case 001 Over all Equipment effectiveness
+            description: Use case 001 Over all Equipment effectiveness
+            shared-access:
+              read:
+                - node-name: src:001:sap
+                - node-name: src:002:opcua
 
 
 # de-facto standards for CDF CogniteClient and logger configuration.
