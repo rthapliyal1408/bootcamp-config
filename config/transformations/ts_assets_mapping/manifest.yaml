@@ -40,4 +40,4 @@ authentication:
    scopes: 
     - ${SCOPES}
    # Optional: If idP requires providing the audience
-   audience: ${AUDIENCE}
+   # audience: ${AUDIENCE}
