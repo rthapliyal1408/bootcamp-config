@@ -3,7 +3,7 @@
 externalId: tr-asset-sample
 name: create_asset_sample
 query:
-    file: transformation2.sql
+    file: transformation1.sql
 destination:
     type: asset_hierarchy
 ignoreNullFields: true
