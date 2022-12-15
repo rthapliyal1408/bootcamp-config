@@ -1,6 +1,6 @@
 ---
 bootstrap:
-  # This is a template bootstrap CLI file that will need to be completed. For a more complete example look at 
+  # This is a template bootstrap CLI file that will need to be completed. For a more complete example look at
   # https://github.com/cognitedata/inso-bootstrap-cli/blob/main/configs/config-deploy-example-v2.yml
 
     features:
@@ -52,9 +52,9 @@ bootstrap:
       # atm (v1) hardcoded is one additional rawdb
             - state
 
-    # Mapping between IDP (Azure Active Directory) groups and CDF groups.
+  # Mapping between IDP (Azure Active Directory) groups and CDF groups.
     idp-cdf-mappings:
-    # Support multiple CDF Projects, like dev/test/prod in one config. 
+    # Support multiple CDF Projects, like dev/test/prod in one config.
         - cdf-project: cdf-bootcamp-15-test
           mappings:
               - cdf-group: cdf:root
@@ -80,36 +80,36 @@ bootstrap:
 
     namespaces:
     # Typical config will have separate namespace by data source ("src") and use cases ("uc")
-    - ns-name: src
-      description: Sources used for data extraction
+        - ns-name: src
+          description: Sources used for data extraction
       # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
-      ns-nodes:
-       - node-name: src:001:sap
-         description: Source 01 data from SAP
-       - node-name: src:002:opcua
-         description: Source 02 data from opcua
+          ns-nodes:
+              - node-name: src:001:sap
+                description: Source 01 data from SAP
+              - node-name: src:002:opcua
+                description: Source 02 data from opcua
     # Typical config will have separate namespace by data source ("src") and use cases ("uc")
-    - ns-name: uc
-      description: Use cases representing the data/products
+        - ns-name: uc
+          description: Use cases representing the data/products
 
       # Description names will normally follow src:001:srcname or uc:001:usecasename naming convention
-      ns-nodes:
-       - node-name: uc:001:oee
-         description: Use case 001 Over all Equipment effectiveness
-         shared-access:
-          read:
-           - node-name: src:001:sap
-           - node-name: src:002:opcua
+          ns-nodes:
+              - node-name: uc:001:oee
+                description: Use case 001 Over all Equipment effectiveness
+                shared-access:
+                    read:
+                        - node-name: src:001:sap
+                        - node-name: src:002:opcua
 # de-facto standards for CDF CogniteClient and logger configuration.
 # Following the same parameter structure as the 'Cognite Python Extractor-Utilities'
 # and 'Cognite DB Extractor' configuration.
 cognite: # kwargs to pass to the CogniteClient, Environment variable format: ${ENVIRONMENT_VARIABLE_NAME}
-    # host: https://${BOOTSTRAP_CDF_CLUSTER}.cognitedata.com/
+  # host: https://${BOOTSTRAP_CDF_CLUSTER}.cognitedata.com/
     host: ${BOOTSTRAP_CDF_HOST}
     project: ${BOOTSTRAP_CDF_PROJECT}
-    #
-    # AAD IdP login credentials:
-    #
+  #
+  # AAD IdP login credentials:
+  #
     idp-authentication:
         client-id: ${BOOTSTRAP_IDP_CLIENT_ID}
         secret: ${BOOTSTRAP_IDP_CLIENT_SECRET}
