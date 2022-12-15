@@ -32,8 +32,8 @@ action: upsert
 #     audience: ${WRITE_CDF_AUDIENCE}
 # Or together like this:
 authentication:
-   clientId: ${CLIENT_ID}
-   clientSecret: ${CLIENT_SECRET}
+   clientId: ${COGNITE_CLIENT_ID}
+   clientSecret: ${COGNITE_CLIENT_SECRET}
    tokenUrl: ${TOKEN_URL}
    # Optional: If idP requires providing the scopes
    cdfProjectName: ${CDF_PROJECT_NAME}
